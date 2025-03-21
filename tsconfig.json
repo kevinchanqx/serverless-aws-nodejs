@@ -1,0 +1,27 @@
+{
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.test.ts", "**/*/dist"],
+  "compilerOptions": {
+    "allowUnreachableCode": false,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "module": "ES2022",
+    "target": "ES2022",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "sourceMap": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "paths": {
+      "@gateways/*": ["./src/gateways/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@services/*": ["./src/services/*"]
+    },
+    "importHelpers": true
+  }
+}

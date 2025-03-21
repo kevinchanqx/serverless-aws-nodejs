@@ -1,0 +1,44 @@
+org: kevinchan950120
+app: aws-serverless
+service: aws-node-project
+frameworkVersion: "3"
+useDotenv: true
+
+custom:
+  esbuild:
+    sourcemap: true
+
+  serverless-offline:
+    httpPort: 4001
+    noAuth: true
+
+plugins:
+  - serverless-esbuild
+
+package:
+  individually: true
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ap-southeast-1
+
+  tracing:
+    lambda: true
+
+  vpc:
+    securityGroupIds:
+      - { env:SECURITY_GROUP_IDS }
+    subnetIds:
+      - subnet-04f2f312aed1b808f
+      - subnet-02ef2cac7570a9dd0
+      - subnet-0a81c228712556282
+
+functions:
+  ping:
+    handler: src/services/ping/index.handler
+    timeout: 30
+    events:
+      - httpApi:
+          method: GET
+          path: /ping-test
