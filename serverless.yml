@@ -1,7 +1,19 @@
 org: kevinchan950120
 app: aws-serverless
-service: aws-node-project
-frameworkVersion: "3"
+service: microservice-1
+
+params:
+  dev:
+    security_group_ids: ${env:DEV_SECURITY_GROUP_IDS}
+    subnet_id_1: ${env:DEV_SUBNET_ID1}
+    subnet_id_2: ${env:DEV_SUBNET_ID2}
+    subnet_id_3: ${env:DEV_SUBNET_ID3}
+  default:
+    security_group_ids: ${env:DEV_SECURITY_GROUP_IDS}
+    subnet_id_1: ${env:DEV_SUBNET_ID1}
+    subnet_id_2: ${env:DEV_SUBNET_ID2}
+    subnet_id_3: ${env:DEV_SUBNET_ID3}
+
 useDotenv: true
 
 custom:
@@ -12,15 +24,13 @@ custom:
     httpPort: 4001
     noAuth: true
 
-plugins:
-  - serverless-esbuild
-
 package:
   individually: true
 
 provider:
   name: aws
   runtime: nodejs18.x
+  stage: dev
   region: ap-southeast-1
 
   tracing:
@@ -28,11 +38,11 @@ provider:
 
   vpc:
     securityGroupIds:
-      - { env:SECURITY_GROUP_IDS }
+      - ${param:security_group_ids}
     subnetIds:
-      - subnet-04f2f312aed1b808f
-      - subnet-02ef2cac7570a9dd0
-      - subnet-0a81c228712556282
+      - ${param:subnet_id_1}
+      - ${param:subnet_id_2}
+      - ${param:subnet_id_3}
 
 functions:
   ping:
@@ -42,3 +52,5 @@ functions:
       - httpApi:
           method: GET
           path: /ping-test
+  retrieve-posts:
+    handler: src/services/posts/index.postsHandler.retrievePosts
