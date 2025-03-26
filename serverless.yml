@@ -4,17 +4,13 @@ service: microservice-1
 
 params:
   dev:
-    security_group_ids: ${env:DEV_SECURITY_GROUP_IDS}
-    subnet_id_1: ${env:DEV_SUBNET_ID1}
-    subnet_id_2: ${env:DEV_SUBNET_ID2}
-    subnet_id_3: ${env:DEV_SUBNET_ID3}
+    security_group_ids: ${env:DEV_MICROSERVICE_SECURITY_GROUP_IDS}
+    subnet_id_1: ${env:DEV_MICROSERVICE_PRIVATE_SUBNET_1A}
+    subnet_id_2: ${env:DEV_MICROSERVICE_PRIVATE_SUBNET_1B}
   default:
-    security_group_ids: ${env:DEV_SECURITY_GROUP_IDS}
-    subnet_id_1: ${env:DEV_SUBNET_ID1}
-    subnet_id_2: ${env:DEV_SUBNET_ID2}
-    subnet_id_3: ${env:DEV_SUBNET_ID3}
-
-useDotenv: true
+    security_group_ids: ${env:DEV_MICROSERVICE_SECURITY_GROUP_IDS}
+    subnet_id_1: ${env:DEV_MICROSERVICE_PRIVATE_SUBNET_1A}
+    subnet_id_2: ${env:DEV_MICROSERVICE_PRIVATE_SUBNET_1B}
 
 custom:
   esbuild:
@@ -30,8 +26,9 @@ package:
 provider:
   name: aws
   runtime: nodejs18.x
-  stage: dev
   region: ap-southeast-1
+  environment:
+    JSONPLACEHOLDER_BASE_URL: ${env:JSONPLACEHOLDER_BASE_URL}
 
   tracing:
     lambda: true
@@ -42,15 +39,19 @@ provider:
     subnetIds:
       - ${param:subnet_id_1}
       - ${param:subnet_id_2}
-      - ${param:subnet_id_3}
 
 functions:
   ping:
-    handler: src/services/ping/index.handler
+    handler: ./src/services/ping/index.handler
     timeout: 30
     events:
       - httpApi:
           method: GET
           path: /ping-test
   retrieve-posts:
-    handler: src/services/posts/index.postsHandler.retrievePosts
+    handler: src/services/posts/index.retrievePostsHandler
+    timeout: 30
+    events:
+      - httpApi:
+          method: GET
+          path: /retrieve-posts
