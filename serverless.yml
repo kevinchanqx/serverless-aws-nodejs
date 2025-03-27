@@ -2,6 +2,10 @@ org: kevinchan950120
 app: aws-serverless
 service: microservice-1
 
+resources:
+  Resources:
+    UserTable: ${file(./src/databases/dynamodb/schema/posts.schema.yml)}
+
 params:
   dev:
     security_group_ids: ${env:DEV_MICROSERVICE_SECURITY_GROUP_IDS}
