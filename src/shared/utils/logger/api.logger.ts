@@ -45,11 +45,11 @@ export const errorHandler =
     if (isAxiosError(err)) {
       _.set(error, "code", err.code);
       _.set(error, "status", err.status);
-      console.log(`${name} Error:`, error);
+      console.error(`[${name} Axios Error]:`, error);
 
       return await Promise.reject(err);
     }
 
-    console.log(`${name} Error:`, error);
+    console.error(`[${name} Error]:`, error);
     return await Promise.reject(err);
   };
