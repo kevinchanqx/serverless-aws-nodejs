@@ -1,9 +1,6 @@
 import { getEnv } from "@shared/utils/env";
-import {
-  errorHandler,
-  requestLog,
-  responseLog,
-} from "@shared/utils/logger/api.logger";
+import { errorHandler, requestLog, responseLog } from "@shared/utils/logger";
+
 import axios, { AxiosInstance } from "axios";
 
 let client: AxiosInstance | undefined;
