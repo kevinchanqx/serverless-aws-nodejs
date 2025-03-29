@@ -1,5 +1,9 @@
 import { getEnv } from "@shared/utils/env";
-import { errorHandler, requestLog, responseLog } from "@shared/utils/logger";
+import {
+  apiErrorHandler,
+  apiRequestLog,
+  apiResponseLog,
+} from "@shared/utils/logger";
 
 import axios, { AxiosInstance } from "axios";
 
@@ -9,10 +13,10 @@ const gatewayName = "JsonPlaceHolder API";
 export const getJsonPlaceHolderClient = () => {
   if (!client) {
     client = axios.create({ baseURL: getEnv("JSONPLACEHOLDER_BASE_URL") });
-    client.interceptors.request.use(requestLog(gatewayName));
+    client.interceptors.request.use(apiRequestLog(gatewayName));
     client.interceptors.response.use(
-      responseLog(gatewayName),
-      errorHandler(gatewayName)
+      apiResponseLog(gatewayName),
+      apiErrorHandler(gatewayName)
     );
     return client;
   }

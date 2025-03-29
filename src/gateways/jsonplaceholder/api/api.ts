@@ -1,4 +1,4 @@
-import { getJsonPlaceHolderClient } from "./client";
+import { getJsonPlaceHolderClient } from "../client";
 
 const client = getJsonPlaceHolderClient();
 
