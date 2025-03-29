@@ -1,1 +1,1 @@
-export type EnvKey = "JSONPLACEHOLDER_BASE_URL";
+export type EnvKey = "JSONPLACEHOLDER_BASE_URL" | "AWS_REGION";

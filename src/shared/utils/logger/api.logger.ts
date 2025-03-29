@@ -5,14 +5,15 @@ import {
   InternalAxiosRequestConfig,
   isAxiosError,
 } from "axios";
+import { logger } from ".";
 
 type InternalClientRequestConfig = InternalAxiosRequestConfig;
 type InternalClientResponseConfig = AxiosResponse;
 type InternalClientErrorConfig = AxiosError | Error;
 
-export const requestLog =
+export const apiRequestLog =
   (name: string) => async (req: InternalClientRequestConfig) => {
-    console.log(`${name} Request:`, {
+    logger.info(`${name} Request:`, {
       baseUrl: req.baseURL,
       data: req.data,
       headers: req.headers,
@@ -24,9 +25,9 @@ export const requestLog =
     return await Promise.resolve(req);
   };
 
-export const responseLog =
+export const apiResponseLog =
   (name: string) => async (res: InternalClientResponseConfig) => {
-    console.log(`${name} Response:`, {
+    logger.info(`${name} Response:`, {
       status: res.status,
       statusText: res.statusText,
       data: res.data,
@@ -34,7 +35,7 @@ export const responseLog =
     return await Promise.resolve(res);
   };
 
-export const errorHandler =
+export const apiErrorHandler =
   (name: string) => async (err: InternalClientErrorConfig) => {
     const error = {
       name: err.name,
@@ -45,11 +46,10 @@ export const errorHandler =
     if (isAxiosError(err)) {
       _.set(error, "code", err.code);
       _.set(error, "status", err.status);
-      console.error(`[${name} Axios Error]:`, error);
+      logger.error(`[${name} Axios Error]:`, error);
 
       return await Promise.reject(err);
     }
 
-    console.error(`[${name} Error]:`, error);
     return await Promise.reject(err);
   };

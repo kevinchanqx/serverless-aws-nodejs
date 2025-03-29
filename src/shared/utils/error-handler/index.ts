@@ -1,9 +1,10 @@
 import { APIGatewayProxyResultV2 } from "aws-lambda";
 import { HttpStatusCode } from "axios";
+import { logger } from "../logger";
 
 export type ThrownErrorPayload = {
   statusCode: HttpStatusCode;
-  data?: Record<string, unknown>;
+  data?: Record<string, unknown> | unknown[];
   message: string;
 };
 
@@ -12,7 +13,7 @@ export const throwError = ({
   data,
   message,
 }: ThrownErrorPayload) => {
-  console.error("[ThrownError]", {
+  logger.error("[ThrownError]", {
     statusCode,
     data,
     message,
@@ -39,18 +40,18 @@ export const catchErrorHandler = (err: unknown): APIGatewayProxyResultV2 => {
   }
 
   if (err instanceof Error) {
-    console.error("[Error]", {
+    logger.error("[Error]", {
       message: err.message,
       stack: err.stack,
       name: err.name,
     });
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: err.message, name: err.name }),
+      body: JSON.stringify({ message: err.message }),
     };
   }
 
-  console.error("[Unknown Error]", err);
+  logger.error("[Unknown Error]", err);
   return {
     statusCode: 500,
     body: JSON.stringify({ message: "Internal Server Error" }),
