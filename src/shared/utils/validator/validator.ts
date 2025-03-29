@@ -12,6 +12,8 @@ export const makeValidator = <T>(name: string, schema: JSONSchemaType<T>) => {
 
       if (!valid) {
         const errors = validator.errors ?? [];
+        logger.error(`[${name}Validator] Errors:`, errors);
+
         const formattedErrors = errors.map((err) => ({
           message: err.message,
           field:
@@ -19,8 +21,6 @@ export const makeValidator = <T>(name: string, schema: JSONSchemaType<T>) => {
               ? err.instancePath.split("/")[1]
               : undefined,
         }));
-
-        logger.error(`[${name}Validator] Errors:`, formattedErrors);
 
         return throwError({
           statusCode: 422,
