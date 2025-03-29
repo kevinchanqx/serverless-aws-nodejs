@@ -1,6 +1,7 @@
 import Ajv, { JSONSchemaType } from "ajv";
 import { throwError } from "../error-handler";
 import { logger } from "../logger";
+import _ from "lodash";
 
 export const makeValidator = <T>(name: string, schema: JSONSchemaType<T>) => {
   const ajv = new Ajv({ allErrors: true });
@@ -20,6 +21,9 @@ export const makeValidator = <T>(name: string, schema: JSONSchemaType<T>) => {
             err.instancePath !== ""
               ? err.instancePath.split("/")[1]
               : undefined,
+          params: _.get(err.params, "allowedValues")
+            ? err.params.allowedValues
+            : undefined,
         }));
 
         return throwError({
