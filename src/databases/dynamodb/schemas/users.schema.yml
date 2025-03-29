@@ -23,7 +23,7 @@ Properties:
   BillingMode: PAY_PER_REQUEST
 
   GlobalSecondaryIndexes:
-    - IndexName: email
+    - IndexName: Users_email_index
 
       KeySchema:
         - AttributeName: email
@@ -34,7 +34,7 @@ Properties:
       Projection:
         ProjectionType: ALL
 
-    - IndexName: gender
+    - IndexName: Users_gender_index
 
       KeySchema:
         - AttributeName: gender
@@ -45,10 +45,7 @@ Properties:
       Projection:
         ProjectionType: ALL
 
-      Projection:
-        ProjectionType: ALL
-
-    - IndexName: name
+    - IndexName: Users_name_index
 
       KeySchema:
         - AttributeName: name
