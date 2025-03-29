@@ -1,3 +1,3 @@
-import { retrievePostsController } from "./controllers/retrieve-posts.controller";
+import { retrievePostsController } from "./controllers";
 
 export const retrievePostsHandler = retrievePostsController;
