@@ -4,7 +4,7 @@ service: microservice-1
 
 resources:
   Resources:
-    UserTable: ${file(./src/databases/dynamodb/schema/posts.schema.yml)}
+    UserTable: ${file(./src/databases/dynamodb/schemas/users.schema.yml)}
 
 params:
   dev:
@@ -45,13 +45,6 @@ provider:
       - ${param:subnet_id_2}
 
 functions:
-  ping:
-    handler: ./src/services/ping/index.handler
-    timeout: 30
-    events:
-      - httpApi:
-          method: GET
-          path: /ping-test
   retrieve-posts:
     handler: src/services/posts/index.retrievePostsHandler
     timeout: 30
@@ -59,3 +52,11 @@ functions:
       - httpApi:
           method: GET
           path: /retrieve-posts
+
+  create-user:
+    handler: src/services/users/index.createUserHandler
+    timeout: 30
+    events:
+      - httpApi:
+          method: POST
+          path: /users/create-user
