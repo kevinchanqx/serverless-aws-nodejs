@@ -20,10 +20,7 @@ export const makeValidator = <T>(name: string, schema: JSONSchemaType<T>) => {
               : undefined,
         }));
 
-        logger.info(
-          `[${name}Validator] Errors:`,
-          JSON.stringify(formattedErrors)
-        );
+        logger.error(`[${name}Validator] Errors:`, formattedErrors);
 
         return throwError({
           statusCode: 422,
