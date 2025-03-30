@@ -20,6 +20,7 @@ export const createUser = async ({
       email,
       gender,
       name,
+      created: new Date().valueOf(),
     },
   });
 

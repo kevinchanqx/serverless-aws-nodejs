@@ -3,6 +3,6 @@ export type User = {
   name: string;
   email: string;
   gender: string;
-  contact: number;
+  contact: string;
   age?: number;
 };

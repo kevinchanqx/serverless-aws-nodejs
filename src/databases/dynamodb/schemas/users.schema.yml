@@ -3,13 +3,13 @@ Properties:
   TableName: Users
 
   AttributeDefinitions:
-    - AttributeName: name
-      AttributeType: S
     - AttributeName: contact
-      AttributeType: N
+      AttributeType: S
     - AttributeName: created
       AttributeType: N
     - AttributeName: email
+      AttributeType: S
+    - AttributeName: name
       AttributeType: S
     - AttributeName: gender
       AttributeType: S
