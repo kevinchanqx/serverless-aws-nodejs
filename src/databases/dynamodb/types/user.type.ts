@@ -11,3 +11,7 @@ export type User = {
 export type UserPrimaryKey = {
   contact: string;
 };
+
+export type UserEmailIndexPrimaryKey = {
+  email: string;
+};
