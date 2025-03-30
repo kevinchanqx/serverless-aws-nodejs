@@ -6,3 +6,8 @@ export type User = {
   contact: string;
   age?: number;
 };
+
+// Partition key and Sort key of Users table
+export type UserPrimaryKey = {
+  contact: string;
+};
