@@ -1,6 +1,10 @@
 import { catchErrorHandler } from "@utils/error-handler";
 import { logger } from "@utils/logger";
-import { APIGatewayProxyEvent, Context } from "aws-lambda";
+import {
+  APIGatewayProxyEvent,
+  APIGatewayProxyResultV2,
+  Context,
+} from "aws-lambda";
 import { getUserByEmailQuerySchema } from "../schemas";
 import { makeValidator } from "@utils/validator";
 import { getUserByEmail } from "../use-cases/get-user-by-email.use-case";
@@ -8,7 +12,7 @@ import { getUserByEmail } from "../use-cases/get-user-by-email.use-case";
 export const getUserByEmailController = async (
   event: APIGatewayProxyEvent,
   context?: Context,
-) => {
+): Promise<APIGatewayProxyResultV2> => {
   logger.info("[getUserByEmailController] Event", event);
   logger.info("[getUserByEmailController] Context", context);
 
@@ -24,7 +28,7 @@ export const getUserByEmailController = async (
     const user = await getUserByEmail(queries);
 
     return {
-      statuCode: 200,
+      statusCode: 200,
       body: JSON.stringify(user),
     };
   } catch (err) {
