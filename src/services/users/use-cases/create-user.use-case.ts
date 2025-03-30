@@ -1,8 +1,10 @@
 import { CreateUser } from "../types";
-import { getDynamoDBDocumentClient } from "../../../databases/dynamodb";
-import { PutCommand } from "@aws-sdk/lib-dynamodb";
-import { DynamoDBTableNames } from "../../../databases/dynamodb/constants";
 import { logger } from "@shared/utils/logger";
+import { throwError } from "@shared/utils/error-handler";
+import {
+  createUserIntoDynamoDB,
+  getUserFromDynamoDB,
+} from "@shared/dynamodb/users";
 
 export const createUser = async ({
   contact,
@@ -10,22 +12,18 @@ export const createUser = async ({
   gender,
   name,
 }: CreateUser) => {
-  logger.info("[createUser] Start");
+  logger.info("[createUser] Executing...");
 
-  const docClient = getDynamoDBDocumentClient();
-  const putCommand = new PutCommand({
-    TableName: DynamoDBTableNames.USERS,
-    Item: {
-      contact,
-      email,
-      gender,
-      name,
-      created: new Date().valueOf(),
-    },
-  });
+  const user = await getUserFromDynamoDB({ Key: { contact } });
+  logger.info("[createUser] User retrieved:", user);
 
-  logger.info("[createUser] Creating user...");
-  await docClient.send(putCommand);
+  if (user) {
+    return throwError({
+      statusCode: 400,
+      message: "User with the same contact is already existed!",
+    });
+  }
 
+  await createUserIntoDynamoDB({ Item: { contact, email, gender, name } });
   logger.info("[createUser] User creation done!");
 };
