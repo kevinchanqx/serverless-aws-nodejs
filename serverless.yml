@@ -69,3 +69,11 @@ functions:
       - httpApi:
           method: POST
           path: /users/create-user
+
+  get-user-by-email:
+    handler: src/services/users/index.getUserByEmailHandler
+    timeout: 30
+    events:
+      - httpApi:
+          method: GET
+          path: /users/get-user-by-email
