@@ -25,7 +25,7 @@ export const getUserByEmailController = async (
 
     return {
       statuCode: 200,
-      body: JSON.stringify({ data: user }),
+      body: JSON.stringify(user),
     };
   } catch (err) {
     return catchErrorHandler(err);
