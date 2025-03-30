@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { catchErrorHandler } from "@shared/utils/error-handler";
+import { catchErrorHandler } from "@utils/error-handler";
 import {
   APIGatewayProxyEvent,
   APIGatewayProxyResultV2,
@@ -7,12 +7,12 @@ import {
 } from "aws-lambda";
 import { createUser } from "../use-cases";
 import { createUserBodySchema } from "../schemas";
-import { makeValidator } from "@shared/utils/validator";
-import { logger } from "@shared/utils/logger";
+import { makeValidator } from "@utils/validator";
+import { logger } from "@utils/logger";
 
 export const createUserController = async (
   event: APIGatewayProxyEvent,
-  context?: Context
+  context?: Context,
 ): Promise<APIGatewayProxyResultV2> => {
   logger.info("[createUserController] Event", event);
   logger.info("[createUserController] Context", context);
@@ -21,7 +21,7 @@ export const createUserController = async (
     const parsedBody = JSON.parse(event.body || "{}");
     const createUserBodyValidator = makeValidator(
       "createUserBody",
-      createUserBodySchema
+      createUserBodySchema,
     );
 
     const body = createUserBodyValidator.validate(parsedBody);

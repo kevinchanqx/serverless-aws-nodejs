@@ -1,6 +1,6 @@
 import { DynamoDBClient, DynamoDBClientConfig } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, TranslateConfig } from "@aws-sdk/lib-dynamodb";
-import { getEnv } from "@shared/utils/env";
+import { getEnv } from "@utils/env";
 
 let dynamoDBClient: DynamoDBClient | undefined;
 const dynamoDBClientConfig: DynamoDBClientConfig = {
@@ -26,7 +26,7 @@ export const getDynamoDBDocumentClient = () => {
     const dynamoDBClient = getDynamoDBClient();
     const dynamoDBDocumentClient = DynamoDBDocumentClient.from(
       dynamoDBClient,
-      translateConfig
+      translateConfig,
     );
     return dynamoDBDocumentClient;
   }

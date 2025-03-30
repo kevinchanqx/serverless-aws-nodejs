@@ -4,12 +4,12 @@ import {
   Context,
 } from "aws-lambda";
 import { retrievePosts } from "../use-cases/retrieve-posts.use-case";
-import { catchErrorHandler } from "@shared/utils/error-handler";
-import { logger } from "@shared/utils/logger";
+import { catchErrorHandler } from "@utils/error-handler";
+import { logger } from "@utils/logger";
 
 export const retrievePostsController = async (
   event: APIGatewayProxyEvent,
-  context?: Context
+  context?: Context,
 ): Promise<APIGatewayProxyResultV2> => {
   logger.info("[retrievePostsController] Event", event);
   logger.info("[retrievePostsController] Context", context);

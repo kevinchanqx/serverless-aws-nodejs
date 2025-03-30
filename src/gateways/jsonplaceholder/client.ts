@@ -1,9 +1,5 @@
-import { getEnv } from "@shared/utils/env";
-import {
-  apiErrorHandler,
-  apiRequestLog,
-  apiResponseLog,
-} from "@shared/utils/logger";
+import { getEnv } from "@utils/env";
+import { apiErrorHandler, apiRequestLog, apiResponseLog } from "@utils/logger";
 
 import axios, { AxiosInstance } from "axios";
 
@@ -16,7 +12,7 @@ export const getJsonPlaceHolderClient = () => {
     client.interceptors.request.use(apiRequestLog(gatewayName));
     client.interceptors.response.use(
       apiResponseLog(gatewayName),
-      apiErrorHandler(gatewayName)
+      apiErrorHandler(gatewayName),
     );
     return client;
   }

@@ -1,10 +1,10 @@
 import { CreateUser } from "../types";
-import { logger } from "@shared/utils/logger";
-import { throwError } from "@shared/utils/error-handler";
+import { logger } from "@utils/logger";
+import { throwError } from "@utils/error-handler";
 import {
   createUserIntoDynamoDB,
   getUserFromDynamoDB,
-} from "@shared/dynamodb/users";
+} from "@databases/dynamodb/operations";
 import { makeConditionExpression } from "@databases/dynamodb/utils";
 import { UserPrimaryKey } from "@databases/dynamodb/types";
 
