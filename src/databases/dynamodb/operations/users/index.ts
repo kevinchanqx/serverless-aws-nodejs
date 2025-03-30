@@ -26,9 +26,14 @@ export const getUserFromDynamoDB = async (
 export const createUserIntoDynamoDB = (
   input: Omit<PutCommandInput, "TableName"> & { Item: User },
 ) => {
+  const item = {
+    createdAt: new Date().valueOf(),
+    ...input.Item,
+  };
   const putCommand = new PutCommand({
     TableName: usersTableName,
     ...input,
+    Item: item,
   });
 
   return docClient.send(putCommand);
