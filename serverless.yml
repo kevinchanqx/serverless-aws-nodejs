@@ -20,10 +20,6 @@ custom:
   esbuild:
     sourcemap: true
 
-  serverless-offline:
-    httpPort: 4001
-    noAuth: true
-
 package:
   individually: true
 
@@ -34,15 +30,28 @@ provider:
   environment:
     JSONPLACEHOLDER_BASE_URL: ${env:JSONPLACEHOLDER_BASE_URL}
 
-  tracing:
-    lambda: true
+  iam:
+    role:
+      statements:
+        # DynamoDB
+        - Effect: Allow
+          Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/*
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:DescribeTable
 
-  vpc:
-    securityGroupIds:
-      - ${param:security_group_ids}
-    subnetIds:
-      - ${param:subnet_id_1}
-      - ${param:subnet_id_2}
+  # commented as lambda deployed in private vpc and subnet would require internet access through NAT gateway which will be billed
+  # vpc:
+  #   securityGroupIds:
+  #     - ${param:security_group_ids}
+  #   subnetIds:
+  #     - ${param:subnet_id_1}
+  #     - ${param:subnet_id_2}
 
 functions:
   retrieve-posts:
@@ -51,7 +60,7 @@ functions:
     events:
       - httpApi:
           method: GET
-          path: /retrieve-posts
+          path: /posts/retrieve-posts
 
   create-user:
     handler: src/services/users/index.createUserHandler
