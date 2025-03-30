@@ -5,8 +5,6 @@ Properties:
   AttributeDefinitions:
     - AttributeName: contact
       AttributeType: S
-    - AttributeName: created
-      AttributeType: N
     - AttributeName: email
       AttributeType: S
     - AttributeName: name
@@ -17,8 +15,6 @@ Properties:
   KeySchema:
     - AttributeName: contact
       KeyType: HASH
-    - AttributeName: created
-      KeyType: RANGE
 
   BillingMode: PAY_PER_REQUEST
 
@@ -28,8 +24,6 @@ Properties:
       KeySchema:
         - AttributeName: email
           KeyType: HASH
-        - AttributeName: created
-          KeyType: RANGE
 
       Projection:
         ProjectionType: ALL
@@ -39,8 +33,6 @@ Properties:
       KeySchema:
         - AttributeName: gender
           KeyType: HASH
-        - AttributeName: created
-          KeyType: RANGE
 
       Projection:
         ProjectionType: ALL
@@ -50,8 +42,6 @@ Properties:
       KeySchema:
         - AttributeName: name
           KeyType: HASH
-        - AttributeName: created
-          KeyType: RANGE
 
       Projection:
         ProjectionType: ALL
