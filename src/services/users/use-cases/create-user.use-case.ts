@@ -5,6 +5,8 @@ import {
   createUserIntoDynamoDB,
   getUserFromDynamoDB,
 } from "@shared/dynamodb/users";
+import { makeConditionExpression } from "@databases/dynamodb/utils";
+import { UserPrimaryKey } from "@databases/dynamodb/types";
 
 export const createUser = async ({
   contact,
@@ -24,6 +26,11 @@ export const createUser = async ({
     });
   }
 
-  await createUserIntoDynamoDB({ Item: { contact, email, gender, name } });
+  await createUserIntoDynamoDB({
+    Item: { contact, email, gender, name },
+    ConditionExpression: makeConditionExpression<keyof UserPrimaryKey>({
+      attributeNotExists: ["contact"],
+    }),
+  });
   logger.info("[createUser] User creation done!");
 };
