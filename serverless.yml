@@ -29,6 +29,7 @@ provider:
   region: ap-southeast-1
   environment:
     JSONPLACEHOLDER_BASE_URL: ${env:JSONPLACEHOLDER_BASE_URL}
+    SCAN_CONCURRENCY: ${env:SCAN_CONCURRENCY}
 
   iam:
     role:
@@ -69,6 +70,14 @@ functions:
       - httpApi:
           method: POST
           path: /users/create-user
+
+  get-users:
+    handler: src/services/users/index.getUsersHandler
+    timeout: 30
+    events:
+      - httpApi:
+          method: GET
+          path: /users
 
   get-user-by-email:
     handler: src/services/users/index.getUserByEmailHandler
