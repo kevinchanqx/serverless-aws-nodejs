@@ -20,7 +20,7 @@
     "paths": {
       "@databases/*": ["./src/databases/*"],
       "@gateways/*": ["./src/gateways/*"],
-      "@shared/*": ["./src/shared/*"],
+      "@utils/*": ["./src/utils/*"],
       "@services/*": ["./src/services/*"]
     },
     "importHelpers": true
