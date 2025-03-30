@@ -5,6 +5,7 @@ import {
   PutCommandInput,
   QueryCommand,
   QueryCommandInput,
+  ScanCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import {
   DynamoDBTableNames,
@@ -16,13 +17,11 @@ import {
   UserEmailIndexPrimaryKey,
   UserPrimaryKey,
 } from "@databases/dynamodb/types";
-import { throwError } from "@utils/error-handler";
+import { getEnv } from "@utils/env";
+import PromisePool from "@supercharge/promise-pool";
+import { getItemsFromSegment } from "../common";
 
 const docClient = getDynamoDBDocumentClient();
-
-// ** Error Handling **
-const userNotFound = () =>
-  throwError({ statusCode: 404, message: "User not found!" });
 
 // ** Get Operations **
 export const getUserFromDynamoDB = async (
@@ -36,10 +35,34 @@ export const getUserFromDynamoDB = async (
   const user = (await docClient.send(getCommand)).Item;
 
   if (!user) {
-    return userNotFound();
+    return null;
   }
 
   return user as User;
+};
+
+export const getUsersFromDynamoDB = async (
+  input: Omit<ScanCommandInput, "TableName" | "TotalSegments" | "Segment"> = {},
+) => {
+  const scanConcurrency = Number(getEnv("SCAN_CONCURRENCY"));
+
+  const totalItems: Record<string, unknown>[] = [];
+  const totalSegments = [...Array(scanConcurrency).keys()];
+
+  await PromisePool.for(totalSegments)
+    .withConcurrency(scanConcurrency)
+    .process(async (index) => {
+      const segmentItems = await getItemsFromSegment(
+        docClient,
+        DynamoDBTableNames.USERS,
+        scanConcurrency,
+        index,
+        input,
+      );
+      totalItems.push(...segmentItems);
+    });
+
+  return totalItems as User[];
 };
 
 export const getUserFromDynamoDBByEmail = async (
@@ -69,7 +92,7 @@ export const getUserFromDynamoDBByEmail = async (
   const user = (await docClient.send(queryCommand)).Items?.[0];
 
   if (!user) {
-    return userNotFound();
+    return null;
   }
 
   return user as User;
