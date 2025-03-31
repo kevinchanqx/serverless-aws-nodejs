@@ -4,17 +4,52 @@ service: microservice-1
 
 resources:
   Resources:
+    # DynamoDB Tables
     UserTable: ${file(./src/databases/dynamodb/schemas/users.schema.yml)}
+
+    # RDS Subnet Groups
+    PostgresSubnetGroup:
+      Type: "AWS::RDS::DBSubnetGroup"
+      Properties:
+        DBSubnetGroupName: postgressubnetgroup
+        DBSubnetGroupDescription: "Subnet group for RDS instance"
+        SubnetIds:
+          - ${param:private_subnet_id_1}
+          - ${param:private_subnet_id_2}
+
+    # RDS DB
+    Postgres:
+      Type: "AWS::RDS::DBInstance"
+      Properties:
+        DBInstanceClass: "db.t3.micro"
+        Engine: "postgres"
+        DBName: "microservices"
+        MasterUsername: ${param:postgres_username}
+        MasterUserPassword: ${param:postgres_password}
+        PubliclyAccessible: false
+        AllocatedStorage: 20
+        DBSubnetGroupName: postgressubnetgroup
 
 params:
   dev:
+    vpc_id: ${env:DEV_MICROSERVICE_VPC_ID}
     security_group_ids: ${env:DEV_MICROSERVICE_SECURITY_GROUP_IDS}
-    subnet_id_1: ${env:DEV_MICROSERVICE_PRIVATE_SUBNET_1A}
-    subnet_id_2: ${env:DEV_MICROSERVICE_PRIVATE_SUBNET_1B}
+    public_subnet_id_1: ${env:DEV_MICROSERVICE_PUBLIC_SUBNET_1A}
+    public_subnet_id_2: ${env:DEV_MICROSERVICE_PUBLIC_SUBNET_1B}
+    private_subnet_id_1: ${env:DEV_MICROSERVICE_PRIVATE_SUBNET_1A}
+    private_subnet_id_2: ${env:DEV_MICROSERVICE_PRIVATE_SUBNET_1B}
+    postgres_username: ${env:DEV_POSTGRES_MASTER_USER_NAME}
+    postgres_password: ${env:DEV_POSTGRES_MASTER_USER_PASSWORD}
+
   default:
+    vpc_id: ${env:DEV_MICROSERVICE_VPC_ID}
     security_group_ids: ${env:DEV_MICROSERVICE_SECURITY_GROUP_IDS}
-    subnet_id_1: ${env:DEV_MICROSERVICE_PRIVATE_SUBNET_1A}
-    subnet_id_2: ${env:DEV_MICROSERVICE_PRIVATE_SUBNET_1B}
+    public_subnet_id_1: ${env:DEV_MICROSERVICE_PUBLIC_SUBNET_1A}
+    public_subnet_id_2: ${env:DEV_MICROSERVICE_PUBLIC_SUBNET_1B}
+    private_subnet_id_1: ${env:DEV_MICROSERVICE_PRIVATE_SUBNET_1A}
+    private_subnet_id_2: ${env:DEV_MICROSERVICE_PRIVATE_SUBNET_1B}
+    postgres_username: ${env:DEV_POSTGRES_MASTER_USER_NAME}
+    postgres_password: ${env:DEV_POSTGRES_MASTER_USER_PASSWORD}
 
 custom:
   esbuild:
@@ -46,18 +81,36 @@ provider:
             - dynamodb:DeleteItem
             - dynamodb:DescribeTable
 
-  # commented as lambda deployed in private vpc and subnet would require internet access through NAT gateway which will be billed
-  # vpc:
-  #   securityGroupIds:
-  #     - ${param:security_group_ids}
-  #   subnetIds:
-  #     - ${param:subnet_id_1}
-  #     - ${param:subnet_id_2}
+        # RDS
+        - Effect: Allow
+          Action:
+            - rds:CreateDBInstance
+            - rds:ModifyDBInstance
+            - rds:DescribeDBInstances
+            - rds:DeleteDBInstance
+            - rds:CreateDBCluster
+            - rds:ModifyDBCluster
+            - rds:DeleteDBCluster
+            - rds:DescribeDBClusters
+          Resource: arn:aws:rds:${aws:region}:${aws:accountId}:db/microservices
+
+  vpc:
+    securityGroupIds:
+      - ${param:security_group_ids}
+    subnetIds:
+      - ${param:private_subnet_id_1}
+      - ${param:private_subnet_id_2}
 
 functions:
   retrieve-posts:
     handler: src/services/posts/index.retrievePostsHandler
     timeout: 30
+    vpc:
+      securityGroupIds:
+        - ${param:security_group_ids}
+      subnetIds:
+        - ${param:public_subnet_id_1} # This lambda will need internet access to call external api, so it need to be deployed in a public subnet
+        - ${param:public_subnet_id_2}
     events:
       - httpApi:
           method: GET
