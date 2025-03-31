@@ -1,4 +1,4 @@
-import { CreateUser } from "../types";
+import { CreateUserBody } from "../types";
 import { logger } from "@utils/logger";
 import { throwError } from "@utils/error-handler";
 import {
@@ -13,7 +13,7 @@ export const createUser = async ({
   email,
   gender,
   name,
-}: CreateUser) => {
+}: CreateUserBody) => {
   logger.info("[createUser] Executing...");
 
   const user = await getUserFromDynamoDB({ Key: { contact } });

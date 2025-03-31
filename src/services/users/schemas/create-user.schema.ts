@@ -1,12 +1,13 @@
 import { JSONSchemaType } from "ajv";
-import { CreateUser } from "../types";
+import { CreateUserBody } from "../types";
+import { Gender } from "@databases/dynamodb/types";
 
-export const createUserBodySchema: JSONSchemaType<CreateUser> = {
+export const createUserBodySchema: JSONSchemaType<CreateUserBody> = {
   type: "object",
   properties: {
     contact: { type: "string", nullable: false },
     email: { type: "string", nullable: false },
-    gender: { type: "string", nullable: false, enum: ["Male", "Female"] },
+    gender: { type: "string", nullable: false, enum: Object.values(Gender) },
     name: { type: "string", nullable: false },
     age: { type: "number", nullable: true },
   },
