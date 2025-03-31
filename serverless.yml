@@ -86,3 +86,11 @@ functions:
       - httpApi:
           method: GET
           path: /users/get-user-by-email
+
+  update-user:
+    handler: src/services/users/index.updateUserHandler
+    timeout: 30
+    events:
+      - httpApi:
+          method: PUT
+          path: /users/{contact}
