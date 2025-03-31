@@ -6,6 +6,8 @@ import {
   QueryCommand,
   QueryCommandInput,
   ScanCommandInput,
+  UpdateCommand,
+  UpdateCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import {
   DynamoDBTableNames,
@@ -19,7 +21,8 @@ import {
 } from "@databases/dynamodb/types";
 import { getEnv } from "@utils/env";
 import PromisePool from "@supercharge/promise-pool";
-import { getItemsFromSegment } from "../common";
+import { getItemsFromSegment } from "@databases/dynamodb/utils";
+import { CreateUserBody } from "@services/users/types";
 
 const docClient = getDynamoDBDocumentClient();
 
@@ -100,7 +103,7 @@ export const getUserFromDynamoDBByEmail = async (
 
 // ** Write Operations **
 export const createUserIntoDynamoDB = (
-  input: Omit<PutCommandInput, "TableName"> & { Item: User },
+  input: Omit<PutCommandInput, "TableName"> & { Item: CreateUserBody },
 ) => {
   const item = {
     createdAt: new Date().valueOf(),
@@ -113,4 +116,16 @@ export const createUserIntoDynamoDB = (
   });
 
   return docClient.send(putCommand);
+};
+
+export const updateUserIntoDynamoDB = (
+  input: Omit<UpdateCommandInput, "TableName"> & { Key: UserPrimaryKey },
+) => {
+  const updateCommand = new UpdateCommand({
+    TableName: DynamoDBTableNames.USERS,
+    ConditionExpression: "attribute_exists(contact)",
+    ...input,
+  });
+
+  return docClient.send(updateCommand);
 };
