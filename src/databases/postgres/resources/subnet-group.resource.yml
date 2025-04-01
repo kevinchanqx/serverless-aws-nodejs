@@ -1,0 +1,7 @@
+Type: "AWS::RDS::DBSubnetGroup"
+Properties:
+  DBSubnetGroupName: postgressubnetgroup
+  DBSubnetGroupDescription: "Subnet group for RDS instance"
+  SubnetIds:
+    - ${param:private_subnet_id_1}
+    - ${param:private_subnet_id_2}
