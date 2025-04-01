@@ -29,6 +29,8 @@ resources:
         PubliclyAccessible: false
         AllocatedStorage: 20
         DBSubnetGroupName: postgressubnetgroup
+        VPCSecurityGroups:
+          - ${param:security_group_ids}
 
 params:
   dev:
@@ -65,6 +67,7 @@ provider:
   environment:
     JSONPLACEHOLDER_BASE_URL: ${env:JSONPLACEHOLDER_BASE_URL}
     SCAN_CONCURRENCY: ${env:SCAN_CONCURRENCY}
+    DEV_POSTGRES_DATABASE_URL: ${env:DEV_POSTGRES_DATABASE_URL}
 
   iam:
     role:
@@ -93,6 +96,12 @@ provider:
             - rds:DeleteDBCluster
             - rds:DescribeDBClusters
           Resource: arn:aws:rds:${aws:region}:${aws:accountId}:db/microservices
+
+        - Effect: Allow
+          Action:
+            - ec2:DescribeSecurityGroups
+            - ec2:DescribeSubnets
+          Resource: "*"
 
   vpc:
     securityGroupIds:
