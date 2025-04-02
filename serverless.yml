@@ -8,10 +8,10 @@ resources:
     UserTable: ${file(./src/databases/dynamodb/resources/users.resource.yml)}
 
     # RDS Subnet Groups
-    PostgresSubnetGroup: ${file(./src/databases/postgres/resources/subnet-group.resource.yml)}
+    # PostgresSubnetGroup: ${file(./src/databases/postgres/resources/subnet-group.resource.yml)}
 
     # RDS DB
-    Postgres: ${file(./src/databases/postgres/resources/instance.resource.yml)}
+    # Postgres: ${file(./src/databases/postgres/resources/instance.resource.yml)}
 
     # SQS
     MockSendEmailQueue:
@@ -23,21 +23,29 @@ resources:
 params:
   dev:
     vpc_id: ${env:DEV_MICROSERVICE_VPC_ID}
-    security_group_ids: ${env:DEV_MICROSERVICE_SECURITY_GROUP_IDS}
+
+    lambda_public_sg_ids: ${env:DEV_MICROSERVICE_LAMBDA_PUBLIC_SG_IDS}
+    lambda_private_sg_ids: ${env:DEV_MICROSERVICE_LAMBDA_PRIVATE_SG_IDS}
+
     public_subnet_id_1: ${env:DEV_MICROSERVICE_PUBLIC_SUBNET_1A}
     public_subnet_id_2: ${env:DEV_MICROSERVICE_PUBLIC_SUBNET_1B}
     private_subnet_id_1: ${env:DEV_MICROSERVICE_PRIVATE_SUBNET_1A}
     private_subnet_id_2: ${env:DEV_MICROSERVICE_PRIVATE_SUBNET_1B}
+
     postgres_username: ${env:DEV_POSTGRES_MASTER_USER_NAME}
     postgres_password: ${env:DEV_POSTGRES_MASTER_USER_PASSWORD}
 
   default:
     vpc_id: ${env:DEV_MICROSERVICE_VPC_ID}
-    security_group_ids: ${env:DEV_MICROSERVICE_SECURITY_GROUP_IDS}
+
+    lambda_public_sg_ids: ${env:DEV_MICROSERVICE_LAMBDA_PUBLIC_SG_IDS}
+    lambda_private_sg_ids: ${env:DEV_MICROSERVICE_LAMBDA_PRIVATE_SG_IDS}
+
     public_subnet_id_1: ${env:DEV_MICROSERVICE_PUBLIC_SUBNET_1A}
     public_subnet_id_2: ${env:DEV_MICROSERVICE_PUBLIC_SUBNET_1B}
     private_subnet_id_1: ${env:DEV_MICROSERVICE_PRIVATE_SUBNET_1A}
     private_subnet_id_2: ${env:DEV_MICROSERVICE_PRIVATE_SUBNET_1B}
+
     postgres_username: ${env:DEV_POSTGRES_MASTER_USER_NAME}
     postgres_password: ${env:DEV_POSTGRES_MASTER_USER_PASSWORD}
 
@@ -55,7 +63,8 @@ provider:
   environment:
     JSONPLACEHOLDER_BASE_URL: ${env:JSONPLACEHOLDER_BASE_URL}
     SCAN_CONCURRENCY: ${env:SCAN_CONCURRENCY}
-    DEV_POSTGRES_DATABASE_URL: ${env:DEV_POSTGRES_DATABASE_URL}
+    AWS_ACCOUNT_ID: ${aws:accountId}
+    AWS_REGION: ${aws:region}
 
   iam:
     role:
@@ -74,6 +83,7 @@ provider:
 
         # RDS
         - Effect: Allow
+          Resource: arn:aws:rds:${aws:region}:${aws:accountId}:db/microservices
           Action:
             - rds:CreateDBInstance
             - rds:ModifyDBInstance
@@ -83,36 +93,46 @@ provider:
             - rds:ModifyDBCluster
             - rds:DeleteDBCluster
             - rds:DescribeDBClusters
-          Resource: arn:aws:rds:${aws:region}:${aws:accountId}:db/microservices
 
         - Effect: Allow
           Action:
             - ec2:DescribeSecurityGroups
             - ec2:DescribeSubnets
+            - ec2:DescribeVpcs
+            - ec2:DescribeVpcEndpoints
           Resource: "*"
 
-  vpc:
-    securityGroupIds:
-      - ${param:security_group_ids}
-    subnetIds:
-      - ${param:private_subnet_id_1}
-      - ${param:private_subnet_id_2}
+        # SQS
+        - Effect: Allow
+          Action:
+            - sqs:CreateQueue
+            - sqs:SendMessage
+            - sqs:ReceiveMessage
+            - sqs:DeleteMessage
+            - sqs:GetQueueAttributes
+            - sqs:GetQueueUrl
+          Resource: "*"
+
+  # Commented for free tier purpose
+  # vpc:
+  #   securityGroupIds:
+  #     - ${param:lambda_private_sg_ids}
+  #   subnetIds:
+  #     - ${param:private_subnet_id_1}
+  #     - ${param:private_subnet_id_2}
 
 functions:
+  # API Functions
+  ## Posts service
   retrieve-posts:
     handler: src/services/posts/index.retrievePostsHandler
     timeout: 30
-    vpc:
-      securityGroupIds:
-        - ${param:security_group_ids}
-      subnetIds:
-        - ${param:public_subnet_id_1} # This lambda will need internet access to call external api, so it need to be deployed in a public subnet
-        - ${param:public_subnet_id_2}
     events:
       - httpApi:
           method: GET
           path: /posts/retrieve-posts
 
+  ## Users service
   create-user:
     handler: src/services/users/index.createUserHandler
     timeout: 30
@@ -146,8 +166,11 @@ functions:
           path: /users/{contact}
 
   # SQS Functions
-  # mock-send-email:
-  #   handler: src/services/users/index.mockSendEmailHandler
-  #   timeout: 30
-  #   events:
-  #     - sqs:
+  mock-send-email:
+    handler: src/services/sqs/index.mockSendEmailHandler
+    timeout: 30
+    events:
+      - sqs:
+          arn: arn:aws:sqs:ap-southeast-1:${aws:accountId}:mock-send-email-queue
+          maximumBatchingWindow: 10 # Optional, all the queues within 10 secs starting from the moment of the first message comes in will be executed at once
+          functionResponseType: ReportBatchItemFailures # if some message fail, only failed message stay in the queue
