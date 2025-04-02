@@ -7,6 +7,7 @@ import {
 } from "@databases/dynamodb/operations";
 import { makeConditionExpression } from "@databases/dynamodb/utils";
 import { UserPrimaryKey } from "@databases/dynamodb/types";
+import { enqueueMockSendEmail } from "@services/sqs/utils/mock-send-email.util";
 
 export const createUser = async ({
   contact,
@@ -33,4 +34,7 @@ export const createUser = async ({
     }),
   });
   logger.info("[createUser] User creation done!");
+
+  await enqueueMockSendEmail({ email });
+  logger.info("[createUser] Message enqueued to send email queue");
 };
