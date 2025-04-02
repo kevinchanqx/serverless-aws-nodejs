@@ -64,7 +64,7 @@ provider:
     JSONPLACEHOLDER_BASE_URL: ${env:JSONPLACEHOLDER_BASE_URL}
     SCAN_CONCURRENCY: ${env:SCAN_CONCURRENCY}
     AWS_ACCOUNT_ID: ${aws:accountId}
-    AWS_REGION: ${aws:region}
+    AWS_SOUTHEAST_REGION: ${aws:region}
 
   iam:
     role:

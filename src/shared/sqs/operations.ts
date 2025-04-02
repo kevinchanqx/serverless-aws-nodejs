@@ -11,7 +11,7 @@ const sqsClient = getSqsClient();
 
 export const enqueueMessage = async <T>(params: SQSEnqueueMessageParams<T>) => {
   const input: SendMessageCommandInput = {
-    QueueUrl: `https://sqs.${getEnv("AWS_REGION")}.amazonaws.com/${getEnv("AWS_ACCOUNT_ID")}/${params.queueName}`,
+    QueueUrl: `https://sqs.${getEnv("AWS_SOUTHEAST_REGION")}.amazonaws.com/${getEnv("AWS_ACCOUNT_ID")}/${params.queueName}`,
     MessageBody: JSON.stringify(params.body),
   };
 

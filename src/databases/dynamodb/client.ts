@@ -4,7 +4,7 @@ import { getEnv } from "@utils/env";
 
 let dynamoDBClient: DynamoDBClient | undefined;
 const dynamoDBClientConfig: DynamoDBClientConfig = {
-  region: getEnv("AWS_REGION"),
+  region: getEnv("AWS_SOUTHEAST_REGION"),
 };
 
 const getDynamoDBClient = () => {
