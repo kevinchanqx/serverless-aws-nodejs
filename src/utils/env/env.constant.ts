@@ -1,4 +1,5 @@
 export type EnvKey =
   | "JSONPLACEHOLDER_BASE_URL"
+  | "AWS_ACCOUNT_ID"
   | "AWS_REGION"
   | "SCAN_CONCURRENCY";
