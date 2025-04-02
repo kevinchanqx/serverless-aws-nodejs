@@ -25,6 +25,7 @@
     "@aws-lambda-powertools/tracer": "^2.16.0",
     "@aws-sdk/client-dynamodb": "^3.777.0",
     "@aws-sdk/client-secrets-manager": "^3.777.0",
+    "@aws-sdk/client-sqs": "^3.777.0",
     "@aws-sdk/lib-dynamodb": "^3.777.0",
     "@supercharge/promise-pool": "^3.2.0",
     "ajv": "^8.17.1",
