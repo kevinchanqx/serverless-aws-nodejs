@@ -6,6 +6,7 @@ resources:
   Resources:
     # DynamoDB Tables
     UserTable: ${file(./src/databases/dynamodb/resources/users.resource.yml)}
+    OrderTable: ${file(./src/databases/dynamodb/resources/orders.resource.yml)}
 
     # RDS Subnet Groups
     # PostgresSubnetGroup: ${file(./src/databases/postgres/resources/subnet-group.resource.yml)}
@@ -19,6 +20,18 @@ resources:
       Properties:
         QueueName: mock-send-email-queue
         VisibilityTimeout: 30
+
+    CreateOrderQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: create-order-queue
+        VisibilityTimeout: 30
+
+    # SNS
+    CreateOrderTopic:
+      Type: "AWS::SNS::Topic"
+      Properties:
+        TopicName: create-order-topic
 
 params:
   dev:
@@ -58,8 +71,8 @@ package:
 
 provider:
   name: aws
-  runtime: nodejs18.x
   region: ap-southeast-1
+  runtime: nodejs18.x
   environment:
     JSONPLACEHOLDER_BASE_URL: ${env:JSONPLACEHOLDER_BASE_URL}
     SCAN_CONCURRENCY: ${env:SCAN_CONCURRENCY}
@@ -111,6 +124,13 @@ provider:
             - sqs:DeleteMessage
             - sqs:GetQueueAttributes
             - sqs:GetQueueUrl
+          Resource: "*"
+
+        # SNS
+        - Effect: Allow
+          Action:
+            - sns:Publish
+            - sns:Subscribe
           Resource: "*"
 
   # Commented for free tier purpose
@@ -171,6 +191,25 @@ functions:
     timeout: 30
     events:
       - sqs:
-          arn: arn:aws:sqs:ap-southeast-1:${aws:accountId}:mock-send-email-queue
+          arn: arn:aws:sqs:${aws:region}:${aws:accountId}:mock-send-email-queue
           maximumBatchingWindow: 10 # Optional, all the queues within 10 secs starting from the moment of the first message comes in will be executed at once
           functionResponseType: ReportBatchItemFailures # if some message fail, only failed message stay in the queue
+
+  create-order:
+    handler: src/services/sqs/index.createOrderHandler
+    timeout: 30
+    events:
+      - sqs:
+          arn: arn:aws:sqs:${aws:region}:${aws:accountId}:create-order-queue
+          maximumBatchingWindow: 10
+          functionResponseType: ReportBatchItemFailures
+
+  # SNS Functions
+  create-order-subscriber:
+    handler: src/services/sns/index.createOrderSubscriberHandler
+    timeout: 30
+    events:
+      - sns:
+          topicName: CreateOrderTopic
+          arn:
+            Fn::Sub: arn:aws:sns:${aws:region}:${aws:accountId}:create-order-topic
