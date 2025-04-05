@@ -2,7 +2,7 @@ import { logger } from "@utils/logger";
 import { CreateOrderSubscriberPayload } from "../types";
 import { v4 as uuidv4 } from "uuid";
 import PromisePool from "@supercharge/promise-pool";
-import { publishCreateOrderMessage } from "../utils";
+import { enqueueCreateOrder } from "@services/sqs/utils";
 
 export const createOrderSubscriber = async (
   payloads: CreateOrderSubscriberPayload[],
@@ -16,7 +16,7 @@ export const createOrderSubscriber = async (
       const orderId = `order-${uniqueId}`;
       const { contact, orderAmount, orderName } = payload;
 
-      await publishCreateOrderMessage({
+      await enqueueCreateOrder({
         contact,
         orderAmount,
         orderId,
@@ -24,7 +24,7 @@ export const createOrderSubscriber = async (
       });
 
       logger.info(
-        "[createOrderSubscriber] Create order message published successfull!",
+        "[createOrderSubscriber] Create order message enqueued successfull!",
         orderId,
       );
     });
