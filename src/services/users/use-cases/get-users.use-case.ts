@@ -1,4 +1,4 @@
-import { getUsersFromDynamoDB } from "@databases/dynamodb/operations";
+import { getUsersFromDynamoDB } from "@databases/dynamodb";
 import { logger } from "@utils/logger";
 
 export const getUsers = async () => {

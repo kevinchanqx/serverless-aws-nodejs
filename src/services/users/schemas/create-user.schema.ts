@@ -1,6 +1,6 @@
 import { JSONSchemaType } from "ajv";
 import { CreateUserBody } from "../types";
-import { Gender } from "@databases/dynamodb/types";
+import { Gender } from "@databases/dynamodb";
 
 export const createUserBodySchema: JSONSchemaType<CreateUserBody> = {
   type: "object",

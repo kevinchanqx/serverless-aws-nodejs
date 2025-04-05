@@ -1,7 +1,7 @@
 import { User } from "@databases/dynamodb/types";
 import { GetUserByEmailQuery } from "../types";
 import { logger } from "@utils/logger";
-import { getUserFromDynamoDBByEmail } from "@databases/dynamodb/operations";
+import { getUserFromDynamoDBByEmail } from "@databases/dynamodb";
 import { throwError } from "@utils/error-handler";
 
 export const getUserByEmail = async (

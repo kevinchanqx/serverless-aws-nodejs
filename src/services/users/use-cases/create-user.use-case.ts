@@ -4,7 +4,7 @@ import { throwError } from "@utils/error-handler";
 import {
   createUserIntoDynamoDB,
   getUserFromDynamoDB,
-} from "@databases/dynamodb/operations";
+} from "@databases/dynamodb";
 import { makeConditionExpression } from "@databases/dynamodb/utils";
 import { UserPrimaryKey } from "@databases/dynamodb/types";
 import { enqueueMockSendEmail } from "@services/sqs/utils/mock-send-email.util";

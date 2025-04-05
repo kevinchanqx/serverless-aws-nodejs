@@ -3,7 +3,7 @@ import { UpdateUserBody, UpdateUserParams } from "../types";
 import {
   getUserFromDynamoDB,
   updateUserIntoDynamoDB,
-} from "@databases/dynamodb/operations";
+} from "@databases/dynamodb";
 import { throwError } from "@utils/error-handler";
 import {
   UserNonNullishFields,
