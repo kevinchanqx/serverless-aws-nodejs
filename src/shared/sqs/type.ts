@@ -1,6 +1,4 @@
-export enum SQSQueueName {
-  MOCK_SEND_EMAIL = "mock-send-email-queue",
-}
+import { SQSQueueName } from "./constant";
 
 export type SQSEnqueueMessageParams<T> = {
   queueName: SQSQueueName;

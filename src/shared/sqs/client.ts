@@ -7,7 +7,6 @@ export const getSqsClient = () => {
   if (!sqsClient) {
     sqsClient = new SQSClient({
       region: getEnv("AWS_SOUTHEAST_REGION"),
-      logger: console,
     });
 
     return sqsClient;
