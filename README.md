@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/4009b753-f6f2-41f3-865a-e38521a700e7)A simple project showcasing managing Infrastructure as a Code (IaaS) for AWS. Best practice when deploying lambda would be using VPC setup.
+A simple project showcasing managing Infrastructure as a Code (IaaS) for AWS. Best practice when deploying lambda would be using VPC setup.
 
 However, for demo and AWS free tier purpose, all the lambdas are deployed without VPC in this project.
 
