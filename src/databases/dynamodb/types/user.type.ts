@@ -1,7 +1,4 @@
-export enum Gender {
-  MALE = "Male",
-  FEMALE = "Female",
-}
+import { Gender } from "../constants";
 
 // User data schema in DB
 export type User = UserPrimaryKey &
