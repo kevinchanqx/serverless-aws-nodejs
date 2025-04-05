@@ -185,8 +185,17 @@ functions:
           method: PUT
           path: /users/{contact}
 
+  ## Orders service
+  create-order:
+    handler: src/services/orders/index.createOrderHandler
+    timeout: 30
+    events:
+      - httpApi:
+          method: POST
+          path: /orders/create-order
+
   # SQS Functions
-  mock-send-email:
+  mock-send-email-queue:
     handler: src/services/sqs/index.mockSendEmailHandler
     timeout: 30
     events:
@@ -195,7 +204,7 @@ functions:
           maximumBatchingWindow: 10 # Optional, all the queues within 10 secs starting from the moment of the first message comes in will be executed at once
           functionResponseType: ReportBatchItemFailures # if some message fail, only failed message stay in the queue
 
-  create-order:
+  create-order-queue:
     handler: src/services/sqs/index.createOrderHandler
     timeout: 30
     events:
