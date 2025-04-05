@@ -1,7 +1,7 @@
 import { logger } from "@utils/logger";
 import { makeValidator } from "@utils/validator";
 import {
-  APIGatewayProxyEvent,
+  APIGatewayProxyEventV2,
   APIGatewayProxyResultV2,
   Context,
 } from "aws-lambda";
@@ -11,7 +11,7 @@ import { updateUser } from "../use-cases";
 import _ from "lodash";
 
 export const updateUserController = async (
-  event: APIGatewayProxyEvent,
+  event: APIGatewayProxyEventV2,
   context: Context,
 ): Promise<APIGatewayProxyResultV2> => {
   logger.info("[updateUserController] Event", event);

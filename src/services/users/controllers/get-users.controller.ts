@@ -1,13 +1,13 @@
 import { logger } from "@utils/logger";
 import {
-  APIGatewayProxyEvent,
+  APIGatewayProxyEventV2,
   APIGatewayProxyResultV2,
   Context,
 } from "aws-lambda";
 import { getUsers } from "../use-cases";
 
 export const getUsersController = async (
-  event: APIGatewayProxyEvent,
+  event: APIGatewayProxyEventV2,
   context: Context,
 ): Promise<APIGatewayProxyResultV2> => {
   logger.info("[getUsersController] Event", event);

@@ -1,7 +1,7 @@
 import { catchErrorHandler } from "@utils/error-handler";
 import { logger } from "@utils/logger";
 import {
-  APIGatewayProxyEvent,
+  APIGatewayProxyEventV2,
   APIGatewayProxyResultV2,
   Context,
 } from "aws-lambda";
@@ -10,7 +10,7 @@ import { makeValidator } from "@utils/validator";
 import { getUserByEmail } from "../use-cases/get-user-by-email.use-case";
 
 export const getUserByEmailController = async (
-  event: APIGatewayProxyEvent,
+  event: APIGatewayProxyEventV2,
   context?: Context,
 ): Promise<APIGatewayProxyResultV2> => {
   logger.info("[getUserByEmailController] Event", event);
