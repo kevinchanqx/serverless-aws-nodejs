@@ -2,7 +2,7 @@ A simple project showcasing managing Infrastructure as a Code (IaaS) for AWS. Be
 
 However, for demo and AWS free tier purpose, all the lambdas are deployed without VPC in this project.
 
-On top of that, screenshot attached below showing the Network Diagram within AWS with the Infrastructurhttps://github.com/kevinchanqx/serverless-aws-nodejse setup.
+On top of that, screenshot attached below showing the Network Diagram within AWS with the Infrastructure.
 
 ![image](https://github.com/user-attachments/assets/b30103a4-8311-4f9b-8d4c-fd00f7a664dc)
 
